@@ -7,6 +7,9 @@ import unicodedata
 # For counting and finding the most frequently used words when generating tag
 from collections import Counter
 
+# For generating summaries
+from transformers import pipeline
+
 
 # Function for taking in text from article (or basically any source) and outputting a list of words cleaned for punctuation, sole numbers, double spaces and other things so that it can be used for text analyssis
 def cleanText(clearText):
@@ -48,3 +51,33 @@ def generateTags(clearTextList):
             tagList.append(wordCount[0])
 
     return tagList
+
+def cleanAndGroupText(clearText):
+    # Normalizing the text, to remove weird characthers that sometimes pop up in webarticles
+    cleanClearText = unicodedata.normalize("NFKD", clearText)
+    # Remove line endings
+    cleanClearText = re.sub(r'\n', ' ', cleanClearText)
+
+    clearTextList = cleanClearText.split()
+
+    chunks = [""]
+
+    i = 0
+
+    for word in clearTextList:
+        i = i + 1
+        chunks[-1] = chunks[-1] + word + " "
+        if i > 500:
+            if "." in word:
+                i = 0
+                chunks.append("")
+
+    if i < 200:
+        chunks[-2:-1] = [''.join(chunks[-2:-1])]
+
+    return chunks
+
+def summarizeText(clearText, summarizer):
+    chunks = cleanAndGroupText(clearText)
+    summaries = [ summary['summary_text'] for summary in summarizer(chunks, max_length=150, min_length=50, do_sample=False) ]
+    return summaries
