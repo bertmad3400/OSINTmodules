@@ -77,7 +77,6 @@ def cleanAndGroupText(clearText):
 
     return chunks
 
-def summarizeText(clearText, summarizer):
-    chunks = cleanAndGroupText(clearText)
+def summarizeText(chunks, summarizer):
     summaries = [ summary['summary_text'] for summary in summarizer(chunks, max_length=150, min_length=50, do_sample=False) ]
     return summaries
