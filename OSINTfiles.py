@@ -23,7 +23,7 @@ def writeTemplateToFile(contentList, templateFile, newFilePath):
             newF.write(filledTemplate)
 
 # Function for taking in some details about an articles and creating a markdown file with those
-def createMDFile(sourceName, sourceURL, articleDetails, articleContent, articleTags, MDFilePath="./"):
+def createMDFile(sourceName, sourceURL, articleDetails, articleContent, articleTags, articleSummary, MDFilePath="./"):
 
     # Define the title
     title = articleDetails[0]
@@ -48,6 +48,7 @@ def createMDFile(sourceName, sourceURL, articleDetails, articleContent, articleT
 
     # And lastly, some tags
     MDTags = "[[" + "]] [[".join(articleTags) + "]] [[" + sourceName + "]]"
+    MDSummary = ["   - " + summary + "\n" for summary in articleSummary ]
 
     # Creating a structure for the template
     contentList = {
@@ -55,7 +56,8 @@ def createMDFile(sourceName, sourceURL, articleDetails, articleContent, articleT
         'subtitle': subtitle,
         'information': MDDetails,
         'articleContent': MDContent,
-        'tags': MDTags
+        'tags': MDTags,
+        'summary' : MDSummary
     }
 
     # Converting the title of the article to a string that can be used as filename and then opening the file in append mode (will create file if it doesn't exist)
